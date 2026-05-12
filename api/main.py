@@ -4,11 +4,8 @@ Cadillac demo gateway: login, static SPA, proxy orchestration to aiphotobooth in
 
 from __future__ import annotations
 
-import json
-import logging
 import os
 import secrets
-import time as _time
 import uuid
 from pathlib import Path
 from typing import Annotated, Optional
@@ -22,32 +19,6 @@ from pydantic import BaseModel
 from starlette.middleware.sessions import SessionMiddleware
 
 from prompts_loader import load_prompts, public_prompt_list, resolve_asset_path
-
-_dbg_logger = logging.getLogger("cadillac-demo")
-if not _dbg_logger.handlers:
-    _h = logging.StreamHandler()
-    _h.setFormatter(logging.Formatter("%(message)s"))
-    _dbg_logger.addHandler(_h)
-_dbg_logger.setLevel(logging.INFO)
-
-
-# #region agent log
-def _dbg(hyp: str, location: str, message: str, data: dict | None = None) -> None:
-    """NDJSON-on-stdout for debug session 14b4e8 (grep `DBG14b4e8` in Dokploy logs)."""
-    try:
-        payload = {
-            "sessionId": "14b4e8",
-            "runId": "cadillac_gateway",
-            "hypothesisId": hyp,
-            "location": location,
-            "message": message,
-            "data": data or {},
-            "timestamp": int(_time.time() * 1000),
-        }
-        _dbg_logger.info("DBG14b4e8 " + json.dumps(payload, default=str))
-    except Exception:
-        pass
-# #endregion
 
 
 def _env_strip(key: str, default: str) -> str:
@@ -133,21 +104,9 @@ async def session_status(request: Request):
 @app.get("/api/prompts")
 async def list_prompts(_: Auth):
     if not PROMPTS_FILE.is_file():
-        # #region agent log
-        _dbg("H6", "main.py:list_prompts", "prompts.json missing", {"path": str(PROMPTS_FILE)})
-        # #endregion
         raise HTTPException(status_code=500, detail="prompts.json missing")
     data = load_prompts(PROMPTS_FILE)
-    out = public_prompt_list(data)
-    # #region agent log
-    _dbg(
-        "H6",
-        "main.py:list_prompts",
-        "prompts returned",
-        {"path": str(PROMPTS_FILE), "count": len(out)},
-    )
-    # #endregion
-    return {"prompts": out}
+    return {"prompts": public_prompt_list(data)}
 
 
 @app.post("/api/capture")
@@ -177,21 +136,6 @@ async def process(
     prompt_id: str = Form(...),
     model: Optional[str] = Form(None),
 ):
-    # #region agent log
-    _dbg(
-        "H3+H4",
-        "main.py:process:entry",
-        "process entered",
-        {
-            "AIPHOTOBOOTH_BASE": AIPHOTOBOOTH_BASE,
-            "AIPHOTOBOOTH_PUBLIC": AIPHOTOBOOTH_PUBLIC,
-            "internal_secret_len": len(INTERNAL_SECRET),
-            "photo_id": photo_id,
-            "prompt_id": prompt_id,
-        },
-    )
-    # #endregion
-
     if not INTERNAL_SECRET:
         raise HTTPException(status_code=500, detail="INTERNAL_API_SECRET not configured on gateway")
 
@@ -239,30 +183,10 @@ async def process(
         async with httpx.AsyncClient(timeout=timeout) as client:
             resp = await client.post(url, headers=headers, data=form, files=files)
     except httpx.RequestError as e:
-        # #region agent log
-        _dbg(
-            "H4",
-            "main.py:process:upstream_connect_error",
-            "httpx.RequestError",
-            {"url": url, "error_type": type(e).__name__, "error": str(e)[:500]},
-        )
-        # #endregion
         raise HTTPException(
             status_code=502,
             detail=f"Brak połączenia z backendem ({AIPHOTOBOOTH_BASE}): {e!s}",
         ) from e
-
-    # #region agent log
-    _dbg(
-        "H1+H2+H3",
-        "main.py:process:upstream_response",
-        "upstream responded",
-        {
-            "status": resp.status_code,
-            "body_preview": resp.text[:500],
-        },
-    )
-    # #endregion
 
     if resp.status_code >= 400:
         detail = resp.text[:2000]
@@ -278,20 +202,6 @@ async def process(
         v = data.get(key)
         if isinstance(v, str) and v.startswith("/"):
             data[key] = _join_public(public_base, v)
-    # #region agent log
-    _dbg(
-        "H5",
-        "main.py:process:rewrite_urls",
-        "URLs rewritten",
-        {
-            "public_base": public_base,
-            "url": data.get("url"),
-            "qr_url": data.get("qr_url"),
-            "download_url": data.get("download_url"),
-            "runId": "post_fix",
-        },
-    )
-    # #endregion
     return JSONResponse(data)
 
 

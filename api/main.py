@@ -4,8 +4,11 @@ Cadillac demo gateway: login, static SPA, proxy orchestration to aiphotobooth in
 
 from __future__ import annotations
 
+import json
+import logging
 import os
 import secrets
+import time as _time
 import uuid
 from pathlib import Path
 from typing import Annotated, Optional
@@ -19,6 +22,32 @@ from pydantic import BaseModel
 from starlette.middleware.sessions import SessionMiddleware
 
 from prompts_loader import load_prompts, public_prompt_list, resolve_asset_path
+
+_dbg_logger = logging.getLogger("cadillac-demo")
+if not _dbg_logger.handlers:
+    _h = logging.StreamHandler()
+    _h.setFormatter(logging.Formatter("%(message)s"))
+    _dbg_logger.addHandler(_h)
+_dbg_logger.setLevel(logging.INFO)
+
+
+# #region agent log
+def _dbg(hyp: str, location: str, message: str, data: dict | None = None) -> None:
+    """NDJSON-on-stdout for debug session 14b4e8 (grep `DBG14b4e8` in Dokploy logs)."""
+    try:
+        payload = {
+            "sessionId": "14b4e8",
+            "runId": "image_pipeline",
+            "hypothesisId": hyp,
+            "location": location,
+            "message": message,
+            "data": data or {},
+            "timestamp": int(_time.time() * 1000),
+        }
+        _dbg_logger.info("DBG14b4e8 " + json.dumps(payload, default=str))
+    except Exception:
+        pass
+# #endregion
 
 
 def _env_strip(key: str, default: str) -> str:
@@ -114,6 +143,19 @@ async def capture(_: Auth, file: UploadFile = File(...)):
     photo_id = uuid.uuid4().hex
     dest = CAPTURE_DIR / f"{photo_id}.jpg"
     raw = await file.read()
+    # #region agent log
+    _dbg(
+        "H1",
+        "main.py:capture",
+        "frontend upload received",
+        {
+            "photo_id": photo_id,
+            "bytes_read": len(raw) if raw else 0,
+            "filename": getattr(file, "filename", None),
+            "content_type": getattr(file, "content_type", None),
+        },
+    )
+    # #endregion
     if not raw:
         raise HTTPException(status_code=400, detail="Empty file")
     dest.write_bytes(raw)
@@ -154,9 +196,24 @@ async def process(
     url = f"{AIPHOTOBOOTH_BASE}/api/internal/cadillac/process"
     headers = {"X-Internal-Secret": INTERNAL_SECRET}
 
+    capture_bytes = image_path.read_bytes()
     files = [
-        ("file", ("capture.jpg", image_path.read_bytes(), "image/jpeg")),
+        ("file", ("capture.jpg", capture_bytes, "image/jpeg")),
     ]
+    # #region agent log
+    _dbg(
+        "H2",
+        "main.py:process:upstream_request",
+        "preparing upstream multipart",
+        {
+            "photo_id": photo_id,
+            "prompt_id": prompt_id,
+            "capture_path": str(image_path),
+            "capture_bytes": len(capture_bytes),
+            "capture_path_exists": image_path.is_file(),
+        },
+    )
+    # #endregion
     form = {
         "custom_prompt": prompt.text,
         "style": "cadillac_custom",

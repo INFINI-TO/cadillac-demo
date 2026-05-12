@@ -20,19 +20,27 @@ from starlette.middleware.sessions import SessionMiddleware
 
 from prompts_loader import load_prompts, public_prompt_list, resolve_asset_path
 
+
+def _env_strip(key: str, default: str) -> str:
+    raw = os.environ.get(key)
+    if raw is None:
+        return default
+    s = str(raw).strip()
+    return s if s else default
+
+
 SESSION_SECRET = os.environ.get("SESSION_SECRET", "change-me-in-production")
 SESSION_COOKIE_SECURE = os.environ.get("SESSION_COOKIE_SECURE", "").lower() in ("1", "true", "yes")
-DEMO_USER = os.environ.get("DEMO_LOGIN_USER", "cadillac")
-DEMO_PASSWORD = os.environ.get("DEMO_LOGIN_PASSWORD", "cadillac")
-INTERNAL_SECRET = os.environ.get(
-    "CADILLAC_INTERNAL_SECRET",
-    os.environ.get("INTERNAL_API_SECRET", ""),
-)
-AIPHOTOBOOTH_BASE = os.environ.get(
+DEMO_USER = _env_strip("DEMO_LOGIN_USER", "cadillac")
+DEMO_PASSWORD = _env_strip("DEMO_LOGIN_PASSWORD", "cadillac")
+INTERNAL_SECRET = (
+    os.environ.get("CADILLAC_INTERNAL_SECRET") or os.environ.get("INTERNAL_API_SECRET") or ""
+).strip()
+AIPHOTOBOOTH_BASE = _env_strip(
     "AIPHOTOBOOTH_INTERNAL_BASE_URL", "http://localhost:8000"
 ).rstrip("/")
 # Public base URL for browser-loaded images / QR (HTTPS host of aiphotobooth API)
-AIPHOTOBOOTH_PUBLIC = os.environ.get("AIPHOTOBOOTH_PUBLIC_URL", "").rstrip("/")
+AIPHOTOBOOTH_PUBLIC = (os.environ.get("AIPHOTOBOOTH_PUBLIC_URL") or "").strip().rstrip("/")
 
 PROMPTS_FILE = Path(os.environ.get("PROMPTS_FILE", "/app/prompts.json"))
 ASSETS_BASE = Path(os.environ.get("ASSETS_BASE", "/app/assets"))
@@ -171,8 +179,14 @@ async def process(
         files.append((logo_fields[idx], (ap.name, ap.read_bytes(), _guess_mime(ap.suffix))))
 
     timeout = httpx.Timeout(300.0, connect=30.0)
-    async with httpx.AsyncClient(timeout=timeout) as client:
-        resp = await client.post(url, headers=headers, data=form, files=files)
+    try:
+        async with httpx.AsyncClient(timeout=timeout) as client:
+            resp = await client.post(url, headers=headers, data=form, files=files)
+    except httpx.RequestError as e:
+        raise HTTPException(
+            status_code=502,
+            detail=f"Brak połączenia z backendem ({AIPHOTOBOOTH_BASE}): {e!s}",
+        ) from e
 
     if resp.status_code >= 400:
         detail = resp.text[:2000]

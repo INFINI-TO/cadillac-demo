@@ -1,6 +1,24 @@
-import axios, { AxiosInstance } from 'axios'
+import axios, { AxiosInstance, isAxiosError } from 'axios'
 
 const API_BASE_URL = import.meta.env.VITE_API_URL ?? ''
+
+/** Czytelny komunikat z odpowiedzi FastAPI (`detail`) lub sieci. */
+export function formatApiError(err: unknown): string {
+  if (isAxiosError(err)) {
+    const d = err.response?.data as { detail?: unknown } | undefined
+    if (d?.detail !== undefined) {
+      const det = d.detail
+      if (typeof det === 'string') return det
+      if (Array.isArray(det))
+        return det.map((x) => (typeof x === 'object' && x && 'msg' in x ? String((x as { msg: string }).msg) : String(x))).join('; ')
+      return JSON.stringify(det)
+    }
+    if (err.response?.status) return `HTTP ${err.response.status}`
+    return err.message
+  }
+  if (err instanceof Error) return err.message
+  return 'Nieznany błąd'
+}
 
 const api: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,

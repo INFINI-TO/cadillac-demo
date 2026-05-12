@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import {
   capturePhoto as apiCapturePhoto,
   fetchPrompts,
+  formatApiError,
   previewCaptureUrl,
   processPhoto as apiProcessPhoto,
   sessionStatus,
@@ -55,7 +56,8 @@ export function AppSession() {
         const p = await fetchPrompts()
         setPrompts(p)
         setStep('welcome')
-      } catch {
+      } catch (err) {
+        console.error('AppSession init:', formatApiError(err))
         navigate('/')
       }
     }
@@ -181,7 +183,7 @@ export function AppSession() {
       })
       setStep('result')
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Błąd przetwarzania')
+      setError(formatApiError(err))
       setStep('style')
     }
   }

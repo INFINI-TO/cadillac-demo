@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { login } from '../services/cadillacApi'
+import { formatApiError, login } from '../services/cadillacApi'
 
 export function LoginPage() {
   const navigate = useNavigate()
@@ -17,8 +17,13 @@ export function LoginPage() {
     try {
       await login(username.trim(), password)
       navigate('/app')
-    } catch {
-      setError('Nieprawidłowe dane logowania')
+    } catch (err) {
+      const msg = formatApiError(err)
+      setError(
+        msg.toLowerCase().includes('invalid credentials') || msg.includes('401')
+          ? 'Nieprawidłowe dane logowania'
+          : msg
+      )
     } finally {
       setLoading(false)
     }

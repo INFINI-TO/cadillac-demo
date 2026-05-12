@@ -3,14 +3,14 @@
     {
       "id": "cadillac_paddock",
       "label": "Cadillac F1 — paddock",
-      "text": "Transform this portrait into a cinematic paddock scene with Cadillac Formula 1 team atmosphere: racing suits, garage lighting, subtle team branding. Keep the person's likeness recognizable.",
+      "text": "Use the FIRST input photo as the source person. Preserve their exact face, facial features, skin tone, hair and overall likeness — the result MUST be clearly recognizable as the SAME individual from the input photo. Place this exact person in the Cadillac Formula 1 team paddock: dress them in a Cadillac F1 racing suit with subtle team branding, garage lighting, F1 cars and pit-lane atmosphere in the background. Keep their head, face and expression intact; only change clothing, hairstyle styling consistent with a race driver, and background. Cinematic, photorealistic, sharp focus, high quality. Do NOT replace the person with a generic model or a different face.",
       "referral_paths": ["referral/f1_grid.png"],
       "logo_paths": ["logos/badge.png"]
     },
     {
       "id": "cadillac_night_city",
       "label": "Cadillac F1 — night city",
-      "text": "Transform this portrait into a dramatic night urban scene with neon reflections and premium automotive racing mood; Cadillac F1 team aesthetic. Keep the person's likeness recognizable.",
+      "text": "Use the FIRST input photo as the source person. Preserve their exact face, facial features, skin tone, hair and overall likeness — the result MUST be clearly recognizable as the SAME individual from the input photo. Place this exact person in a dramatic night urban scene with neon reflections, wet asphalt and premium automotive racing mood inspired by the Cadillac F1 team. Keep their head, face and expression intact; only change clothing (modern racing-inspired jacket) and background. Cinematic, photorealistic, sharp focus, high quality. Do NOT replace the person with a generic model or a different face.",
       "referral_paths": [],
       "logo_paths": ["logos/badge.png"]
     }

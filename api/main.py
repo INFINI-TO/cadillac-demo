@@ -5,6 +5,8 @@ Cadillac demo gateway: login, static SPA, proxy orchestration to aiphotobooth in
 from __future__ import annotations
 
 import os
+import secrets
+import uuid
 from pathlib import Path
 from typing import Annotated, Optional
 

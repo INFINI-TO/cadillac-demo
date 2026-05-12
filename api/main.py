@@ -277,7 +277,7 @@ async def process(
     for key in ("url", "qr_url", "download_url"):
         v = data.get(key)
         if isinstance(v, str) and v.startswith("/"):
-            data[key] = f"{public_base}{v}"
+            data[key] = _join_public(public_base, v)
     # #region agent log
     _dbg(
         "H5",
@@ -288,6 +288,7 @@ async def process(
             "url": data.get("url"),
             "qr_url": data.get("qr_url"),
             "download_url": data.get("download_url"),
+            "runId": "post_fix",
         },
     )
     # #endregion
@@ -301,6 +302,24 @@ def _guess_mime(suffix: str) -> str:
     if s in (".webp",):
         return "image/webp"
     return "image/jpeg"
+
+
+def _join_public(base: str, rel: str) -> str:
+    """Join public base URL with a server-relative path, avoiding duplicate path prefix.
+
+    Example: base=https://host/api, rel=/api/photo/x -> https://host/api/photo/x
+    """
+    from urllib.parse import urlsplit
+
+    if not rel.startswith("/"):
+        return f"{base.rstrip('/')}/{rel}"
+    parts = urlsplit(base)
+    base_path = parts.path.rstrip("/")
+    if base_path and rel.startswith(base_path + "/"):
+        rel = rel[len(base_path):]
+    elif base_path and rel == base_path:
+        rel = ""
+    return f"{parts.scheme}://{parts.netloc}{base_path}{rel}"
 
 
 # Static SPA (must be after API routes if same prefix — API is /api, static is /)

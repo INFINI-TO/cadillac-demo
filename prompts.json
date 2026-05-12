@@ -3,15 +3,15 @@
     {
       "id": "cadillac_paddock",
       "label": "Cadillac F1 — paddock",
-      "text": "Use the FIRST input photo as the source person. Preserve their exact face, facial features, skin tone, hair and overall likeness — the result MUST be clearly recognizable as the SAME individual from the input photo. Place this exact person in the Cadillac Formula 1 team paddock: dress them in a Cadillac F1 racing suit with subtle team branding, garage lighting, F1 cars and pit-lane atmosphere in the background. Keep their head, face and expression intact; only change clothing, hairstyle styling consistent with a race driver, and background. Cinematic, photorealistic, sharp focus, high quality. Do NOT replace the person with a generic model or a different face.",
-      "referral_paths": ["referral/f1_grid.png"],
+      "text": "Use the FIRST input photo as the source person. Preserve their exact face, facial features, skin tone, hair and overall likeness — the result MUST be clearly recognizable as the SAME individual from the input photo. The reference image sheet shows: (a) the target Cadillac Formula 1 racing suit — a black/dark suit with white Cadillac F1 branding, TWG logo on the chest, driver name and number '11' on the leg, alpinestars and team sponsor patches; copy its EXACT colors, panel patterns, sponsor placements and styling onto the person. (b) the team's black Cadillac F1 car with white/silver livery, IFS, Core Scientific, TWG and Jim Beam branding — place this car visibly in the background. Compose the scene in the Cadillac F1 paddock / pit lane: garage lighting, mechanics' silhouettes blurred, pit-lane atmosphere. Keep the person's head, face and expression intact; only change clothing to match the reference suit and adjust hairstyle to a race driver style. Cinematic, photorealistic, sharp focus, high quality. Do NOT replace the person with a generic model or a different face.",
+      "referral_paths": ["referral/race_suit.png", "referral/car.png"],
       "logo_paths": ["logos/badge.png"]
     },
     {
       "id": "cadillac_night_city",
       "label": "Cadillac F1 — night city",
-      "text": "Use the FIRST input photo as the source person. Preserve their exact face, facial features, skin tone, hair and overall likeness — the result MUST be clearly recognizable as the SAME individual from the input photo. Place this exact person in a dramatic night urban scene with neon reflections, wet asphalt and premium automotive racing mood inspired by the Cadillac F1 team. Keep their head, face and expression intact; only change clothing (modern racing-inspired jacket) and background. Cinematic, photorealistic, sharp focus, high quality. Do NOT replace the person with a generic model or a different face.",
-      "referral_paths": [],
+      "text": "Use the FIRST input photo as the source person. Preserve their exact face, facial features, skin tone, hair and overall likeness — the result MUST be clearly recognizable as the SAME individual from the input photo. The reference image shows the target Cadillac Formula 1 racing suit — a black suit with white Cadillac F1 branding, TWG logo on the chest, alpinestars patches and team sponsors; match its EXACT colors, panel design and sponsor placements when dressing the person (you may stylize it slightly as a sleek racing-inspired jacket for an off-track look, but keep the livery readable). Place this exact person in a dramatic night urban scene with neon reflections, wet asphalt and premium automotive racing mood inspired by the Cadillac F1 team. Keep their head, face and expression intact; only change clothing and background. Cinematic, photorealistic, sharp focus, high quality. Do NOT replace the person with a generic model or a different face.",
+      "referral_paths": ["referral/race_suit.png","referral/car.png"],
       "logo_paths": ["logos/badge.png"]
     }
   ]

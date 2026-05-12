@@ -1,0 +1,39 @@
+# Cadillac demo + aiphotobooth backend on one Docker network (Dokploy / local).
+# Adjust build context paths if repos are not siblings on disk.
+
+services:
+  aiphotobooth-backend:
+    build:
+      context: ../aiphotobooth/backend
+      dockerfile: Dockerfile
+    container_name: cadillac-stack-backend
+    networks:
+      - cadillac_net
+    profiles:
+      - with-backend
+    environment:
+      INTERNAL_API_SECRET: ${INTERNAL_API_SECRET:-dev-internal-secret}
+    # Set remaining variables (DATABASE_URL, AI keys, etc.) via Dokploy or an env file on the host.
+
+  cadillac-demo:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: ""
+    container_name: cadillac-stack-demo
+    networks:
+      - cadillac_net
+    ports:
+      - "${CADILLAC_PORT:-8088}:8080"
+    environment:
+      SESSION_SECRET: ${SESSION_SECRET:-change-me-dev-only}
+      DEMO_LOGIN_USER: ${DEMO_LOGIN_USER:-cadillac}
+      DEMO_LOGIN_PASSWORD: ${DEMO_LOGIN_PASSWORD:-cadillac}
+      INTERNAL_API_SECRET: ${INTERNAL_API_SECRET:-dev-internal-secret}
+      AIPHOTOBOOTH_INTERNAL_BASE_URL: http://aiphotobooth-backend:8000
+      AIPHOTOBOOTH_PUBLIC_URL: ${AIPHOTOBOOTH_PUBLIC_URL:-http://localhost:8000}
+      SESSION_COOKIE_SECURE: "false"
+networks:
+  cadillac_net:
+    driver: bridge

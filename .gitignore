@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.env
+.env.local
+__pycache__/
+*.pyc
+.Python
+.venv/
+venv/
+*.egg-info/
+.DS_Store
+/tmp/cadillac-captures/

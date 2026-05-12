@@ -1,0 +1,18 @@
+{
+  "prompts": [
+    {
+      "id": "cadillac_paddock",
+      "label": "Cadillac F1 — paddock",
+      "text": "Transform this portrait into a cinematic paddock scene with Cadillac Formula 1 team atmosphere: racing suits, garage lighting, subtle team branding. Keep the person's likeness recognizable.",
+      "referral_paths": ["referral/f1_grid.png"],
+      "logo_paths": ["logos/badge.png"]
+    },
+    {
+      "id": "cadillac_night_city",
+      "label": "Cadillac F1 — night city",
+      "text": "Transform this portrait into a dramatic night urban scene with neon reflections and premium automotive racing mood; Cadillac F1 team aesthetic. Keep the person's likeness recognizable.",
+      "referral_paths": [],
+      "logo_paths": ["logos/badge.png"]
+    }
+  ]
+}

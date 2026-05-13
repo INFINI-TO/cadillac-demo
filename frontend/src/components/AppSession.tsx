@@ -77,7 +77,7 @@ export function AppSession() {
         videoRef.current.play().catch(() => {})
       }
     } catch {
-      setError('Brak dostępu do kamery. Zezwól na użycie kamery w przeglądarce.')
+      setError('Camera access denied. Please allow camera use in your browser.')
     }
   }, [])
 
@@ -122,11 +122,11 @@ export function AppSession() {
   const doCapture = async () => {
     const video = videoRef.current
     if (!video) {
-      setError('Kamera niegotowa.')
+      setError('Camera is not ready.')
       return
     }
     if (video.videoWidth === 0 || video.videoHeight === 0) {
-      setError('Kamera niegotowa.')
+      setError('Camera is not ready.')
       return
     }
     if (!canvasRef.current) {
@@ -151,7 +151,7 @@ export function AppSession() {
       setCapturedImageUrl(previewCaptureUrl(cap.photo_id))
       setStep('preview')
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Błąd zapisu zdjęcia')
+      setError(err instanceof Error ? err.message : 'Could not save the photo')
       setCapturedImageUrl(null)
       await startCamera()
     }
@@ -230,7 +230,7 @@ export function AppSession() {
   if (step === 'loading') {
     return (
       <div className="w-full h-full min-h-screen flex items-center justify-center" style={{ background: 'rgb(var(--aipb-bg))' }}>
-        <div className="text-white text-xl">Ładowanie…</div>
+        <div className="text-white text-xl">Loading…</div>
       </div>
     )
   }
@@ -305,7 +305,7 @@ export function AppSession() {
                     height: 'clamp(4rem, 8vh, 12rem)',
                     boxShadow: '0 0 0 clamp(5px, 0.7vh, 12px) rgba(255,255,255,0.4)',
                   }}
-                  aria-label="Wstecz"
+                  aria-label="Back"
                 >
                   <img
                     src={backIcon}
@@ -331,7 +331,7 @@ export function AppSession() {
                     height: 'clamp(5rem, 10vh, 15rem)',
                     boxShadow: '0 0 0 clamp(5px, 0.7vh, 12px) rgba(255,255,255,0.4)',
                   }}
-                  aria-label="Zdjęcie"
+                  aria-label="Take photo"
                 >
                   <img
                     src={takePhotoIcon}
@@ -364,7 +364,7 @@ export function AppSession() {
               {capturedImageUrl ? (
                 <img src={capturedImageUrl} alt="" className="w-full h-full object-cover" style={{ transform: 'scaleX(-1)' }} />
               ) : (
-                <div className="text-white text-xl">Podgląd…</div>
+                <div className="text-white text-xl">Preview…</div>
               )}
             </div>
             <div className="absolute bottom-0 left-0 right-0 z-30" style={{ paddingTop: 'clamp(2rem, 3vh, 5rem)' }}>
@@ -388,7 +388,7 @@ export function AppSession() {
                     height: 'clamp(4rem, 8vh, 12rem)',
                     boxShadow: '0 0 0 clamp(5px, 0.7vh, 12px) rgba(255,255,255,0.4)',
                   }}
-                  aria-label="Powtórz"
+                  aria-label="Retake"
                 >
                   <img
                     src={retakeIcon}
@@ -413,7 +413,7 @@ export function AppSession() {
                     height: 'clamp(5rem, 10vh, 15rem)',
                     boxShadow: '0 0 0 clamp(5px, 0.7vh, 12px) rgba(255,255,255,0.4)',
                   }}
-                  aria-label="Akceptuj"
+                  aria-label="Accept"
                 >
                   <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ width: 'clamp(2.5rem, 5vh, 7.5rem)', height: 'clamp(2.5rem, 5vh, 7.5rem)' }}>
                     <polyline points="20 6 9 17 4 12" />
@@ -431,7 +431,10 @@ export function AppSession() {
         )}
 
         {step === 'processing' && (
-          <ProcessingView title="AI przetwarza zdjęcie…" subtitle={selectedLabel ? `Prompt: ${selectedLabel}` : 'Proszę czekać'} />
+          <ProcessingView
+            title="AI is processing your photo…"
+            subtitle={selectedLabel ? `Prompt: ${selectedLabel}` : 'Please wait'}
+          />
         )}
 
         {step === 'result' && result && (

@@ -1,7 +1,7 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { formatApiError, login } from '../services/cadillacApi'
+import { formatApiError, login, sessionStatus } from '../services/cadillacApi'
 
 export function LoginPage() {
   const navigate = useNavigate()
@@ -9,6 +9,27 @@ export function LoginPage() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const [sessionChecked, setSessionChecked] = useState(false)
+
+  useEffect(() => {
+    let cancelled = false
+    ;(async () => {
+      try {
+        const s = await sessionStatus()
+        if (cancelled) return
+        if (s.authenticated) {
+          navigate('/app', { replace: true })
+          return
+        }
+      } catch {
+        /* stay on login */
+      }
+      if (!cancelled) setSessionChecked(true)
+    })()
+    return () => {
+      cancelled = true
+    }
+  }, [navigate])
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -21,12 +42,23 @@ export function LoginPage() {
       const msg = formatApiError(err)
       setError(
         msg.toLowerCase().includes('invalid credentials') || msg.includes('401')
-          ? 'Nieprawidłowe dane logowania'
+          ? 'Invalid username or password'
           : msg
       )
     } finally {
       setLoading(false)
     }
+  }
+
+  if (!sessionChecked) {
+    return (
+      <div
+        className="min-h-screen flex items-center justify-center px-6"
+        style={{ background: 'rgb(var(--aipb-bg))' }}
+      >
+        <div className="text-white text-xl">Loading…</div>
+      </div>
+    )
   }
 
   return (
@@ -51,20 +83,20 @@ export function LoginPage() {
           Cadillac F1 demo
         </h1>
         <p className="text-center text-sm" style={{ color: 'rgba(255,255,255,0.65)' }}>
-          Zaloguj się, aby uruchomić demo.
+          Sign in to launch the demo.
         </p>
         {error && (
           <p className="text-center text-sm text-red-400">{error}</p>
         )}
         <div className="space-y-3">
-          <label className="block text-xs uppercase tracking-wider text-white/60">Użytkownik</label>
+          <label className="block text-xs uppercase tracking-wider text-white/60">Username</label>
           <input
             className="w-full rounded-lg px-3 py-3 bg-black/40 border border-white/10 text-white"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             autoComplete="username"
           />
-          <label className="block text-xs uppercase tracking-wider text-white/60">Hasło</label>
+          <label className="block text-xs uppercase tracking-wider text-white/60">Password</label>
           <input
             type="password"
             className="w-full rounded-lg px-3 py-3 bg-black/40 border border-white/10 text-white"
@@ -79,7 +111,7 @@ export function LoginPage() {
           className="w-full py-3 rounded-lg font-semibold uppercase tracking-wide disabled:opacity-50"
           style={{ background: 'var(--aipb-accent-bg)', color: '#fff' }}
         >
-          {loading ? 'Logowanie…' : 'Zaloguj'}
+          {loading ? 'Signing in…' : 'Sign in'}
         </button>
       </motion.form>
     </div>

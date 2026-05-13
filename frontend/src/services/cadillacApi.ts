@@ -2,7 +2,7 @@ import axios, { AxiosInstance, isAxiosError } from 'axios'
 
 const API_BASE_URL = import.meta.env.VITE_API_URL ?? ''
 
-/** Czytelny komunikat z odpowiedzi FastAPI (`detail`) lub sieci. */
+/** Human-readable message from FastAPI (`detail`) or network error. */
 export function formatApiError(err: unknown): string {
   if (isAxiosError(err)) {
     const d = err.response?.data as { detail?: unknown } | undefined
@@ -17,7 +17,7 @@ export function formatApiError(err: unknown): string {
     return err.message
   }
   if (err instanceof Error) return err.message
-  return 'Nieznany błąd'
+  return 'Unknown error'
 }
 
 const api: AxiosInstance = axios.create({

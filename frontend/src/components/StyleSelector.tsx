@@ -55,7 +55,7 @@ export function StyleSelector({ onSelect, onBack, prompts }: StyleSelectorProps)
             fontSize: 'clamp(1.5rem, 3vh, 2.5rem)'
           }}
         >
-          Wybierz prompt
+          Choose a prompt
         </h2>
       </div>
 

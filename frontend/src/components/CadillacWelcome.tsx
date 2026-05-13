@@ -70,7 +70,7 @@ export function CadillacWelcome({ onStart, isLoading, error }: CadillacWelcomePr
             Cadillac F1 demo
           </h1>
           <p className="text-gray-300 mt-2" style={{ fontSize: 'clamp(1rem, 2vh, 1.5rem)' }}>
-            Zrób zdjęcie i wybierz jeden z dwóch promptów AI.
+            Take a photo and choose one of the two AI prompts.
           </p>
         </motion.div>
 
@@ -101,7 +101,7 @@ export function CadillacWelcome({ onStart, isLoading, error }: CadillacWelcomePr
             marginTop: 'clamp(1.5rem, 3vh, 4rem)',
           }}
         >
-          {isLoading ? 'Uruchamianie…' : 'Start'}
+          {isLoading ? 'Starting…' : 'Start'}
         </motion.button>
       </motion.div>
     </div>

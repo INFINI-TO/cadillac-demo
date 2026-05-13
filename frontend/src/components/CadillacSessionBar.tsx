@@ -42,7 +42,7 @@ export function CadillacSessionBar() {
         onClick={handleLogout}
         className="text-sm uppercase tracking-wide px-4 py-2 rounded-lg border border-white/20 text-white/90 hover:bg-white/5"
       >
-        Wyloguj
+        Log out
       </button>
     </div>
   )

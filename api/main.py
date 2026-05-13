@@ -101,6 +101,11 @@ async def session_status(request: Request):
     return {"authenticated": bool(request.session.get("authenticated"))}
 
 
+@app.get("/health")
+async def health():
+    return {"status": "ok"}
+
+
 @app.get("/api/prompts")
 async def list_prompts(_: Auth):
     if not PROMPTS_FILE.is_file():
@@ -232,11 +237,43 @@ def _join_public(base: str, rel: str) -> str:
     return f"{parts.scheme}://{parts.netloc}{base_path}{rel}"
 
 
-# Static SPA (must be after API routes if same prefix — API is /api, static is /)
+def _safe_dist_file(dist: Path, rel: str) -> Path | None:
+    """Return a file under dist if it exists and `rel` does not escape the directory."""
+    if not rel or rel.startswith(("/", "\\")) or Path(rel).is_absolute():
+        return None
+    parts = Path(rel).parts
+    if ".." in parts:
+        return None
+    candidate = (dist / rel).resolve()
+    try:
+        candidate.relative_to(dist.resolve())
+    except ValueError:
+        return None
+    return candidate if candidate.is_file() else None
+
+
+def _spa_index_response() -> FileResponse:
+    index = DIST_DIR / "index.html"
+    if not index.is_file():
+        raise HTTPException(status_code=503, detail="Frontend not built")
+    return FileResponse(index)
+
+
+# Static SPA: explicit routes so deep links like /app work on refresh (StaticFiles mount at "/" is unreliable).
 if DIST_DIR.is_dir():
-    app.mount("/", StaticFiles(directory=str(DIST_DIR), html=True), name="static")
+    _assets_dir = DIST_DIR / "assets"
+    if _assets_dir.is_dir():
+        app.mount("/assets", StaticFiles(directory=str(_assets_dir)), name="vite_assets")
 
+    @app.get("/")
+    async def spa_root():
+        return _spa_index_response()
 
-@app.get("/health")
-async def health():
-    return {"status": "ok"}
+    @app.get("/{full_path:path}")
+    async def spa_or_static(full_path: str):
+        if full_path == "api" or full_path.startswith("api/"):
+            raise HTTPException(status_code=404, detail="Not Found")
+        f = _safe_dist_file(DIST_DIR, full_path)
+        if f is not None:
+            return FileResponse(f)
+        return _spa_index_response()

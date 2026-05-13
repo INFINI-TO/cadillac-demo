@@ -169,8 +169,8 @@ async def process(
     if model:
         form["model"] = model
 
-    # Map referral_paths -> referral_0, referral_1
-    for idx, rel in enumerate(prompt.referral_paths[:2]):
+    # Map referral_paths -> referral_0, referral_1, referral_2 (upstream internal API)
+    for idx, rel in enumerate(prompt.referral_paths[:3]):
         ap = resolve_asset_path(ASSETS_BASE, rel)
         if not ap.is_file():
             raise HTTPException(status_code=500, detail=f"Missing asset: {rel}")

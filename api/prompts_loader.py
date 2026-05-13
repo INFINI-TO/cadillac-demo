@@ -19,8 +19,8 @@ class PromptEntry(BaseModel):
     @field_validator("referral_paths")
     @classmethod
     def max_referrals(cls, v: List[str]) -> List[str]:
-        if len(v) > 2:
-            raise ValueError("At most 2 referral_paths supported")
+        if len(v) > 3:
+            raise ValueError("At most 3 referral_paths supported")
         return v
 
     @field_validator("logo_paths")

@@ -135,19 +135,19 @@ export function DemoExpired({ onRequestNew }: DemoExpiredProps) {
             className="text-white mb-4"
             style={{ fontSize: 'clamp(1.5rem, 4vh, 3rem)', fontWeight: 600 }}
           >
-            Demo Session Expired
+            Chequered flag—stint complete
           </h1>
           <p 
             className="text-gray-400 mb-2"
             style={{ fontSize: 'clamp(1rem, 2vh, 1.5rem)' }}
           >
-            Your demo session has ended.
+            Your demo session has crossed the line.
           </p>
           <p 
             className="text-gray-500"
             style={{ fontSize: 'clamp(0.875rem, 1.5vh, 1.25rem)' }}
           >
-            Request a new demo or contact us for full access.
+            Request another demo lap or contact us for full paddock access.
           </p>
         </motion.div>
 
@@ -183,7 +183,7 @@ export function DemoExpired({ onRequestNew }: DemoExpiredProps) {
             marginTop: 'clamp(1.5rem, 3vh, 4rem)',
           }}
         >
-          Request New Demo
+          Request another demo lap
         </motion.button>
       </motion.div>
     </div>

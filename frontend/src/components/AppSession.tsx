@@ -79,7 +79,9 @@ export function AppSession() {
         videoRef.current.play().catch(() => {})
       }
     } catch {
-      setError('Camera access denied. Please allow camera use in your browser.')
+      setError(
+        "We can't access your camera—allow permissions in your browser, then reload and try again.",
+      )
     }
   }, [])
 
@@ -124,11 +126,11 @@ export function AppSession() {
   const doCapture = async () => {
     const video = videoRef.current
     if (!video) {
-      setError('Camera is not ready.')
+      setError("Camera isn't ready yet—give it a moment, then try again.")
       return
     }
     if (video.videoWidth === 0 || video.videoHeight === 0) {
-      setError('Camera is not ready.')
+      setError("Camera isn't ready yet—give it a moment, then try again.")
       return
     }
     if (!canvasRef.current) {
@@ -153,7 +155,7 @@ export function AppSession() {
       setCapturedImageUrl(previewCaptureUrl(cap.photo_id))
       setStep('preview')
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Could not save the photo')
+      setError(err instanceof Error ? err.message : "Couldn't save that lap—try again.")
       setCapturedImageUrl(null)
       await startCamera()
     }
@@ -233,7 +235,7 @@ export function AppSession() {
   if (step === 'loading') {
     return (
       <div className="w-full h-full min-h-screen flex items-center justify-center" style={{ background: 'rgb(var(--aipb-bg))' }}>
-        <div className="text-white text-xl">Loading…</div>
+        <div className="text-white text-xl">Bringing your garage online…</div>
       </div>
     )
   }
@@ -367,7 +369,7 @@ export function AppSession() {
               {capturedImageUrl ? (
                 <img src={capturedImageUrl} alt="" className="w-full h-full object-cover" style={{ transform: 'scaleX(-1)' }} />
               ) : (
-                <div className="text-white text-xl">Preview…</div>
+                <div className="text-white text-xl">Developing your shot…</div>
               )}
             </div>
             <div className="absolute bottom-0 left-0 right-0 z-30" style={{ paddingTop: 'clamp(2rem, 3vh, 5rem)' }}>
@@ -436,8 +438,12 @@ export function AppSession() {
         {step === 'processing' && (
           <ProcessingView
             key={processingRunId}
-            title="AI is processing your photo…"
-            subtitle={selectedLabel ? `Prompt: ${selectedLabel}` : 'Please wait'}
+            title="Pit stop in progress"
+            subtitle={
+              selectedLabel
+                ? `Applying livery: ${selectedLabel}—stay on this screen until the chequered flag.`
+                : undefined
+            }
           />
         )}
 

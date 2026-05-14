@@ -22,8 +22,8 @@ interface ProcessingViewProps {
 }
 
 export function ProcessingView({ 
-  title = "AI transforming your photo...", 
-  subtitle = "This may take up to 30 seconds" 
+  title = 'Pit stop in progress',
+  subtitle = 'Hang tight—most finishes land in under 30 seconds.',
 }: ProcessingViewProps) {
   const processingAnimation = useMemo(() => {
     const k =

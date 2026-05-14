@@ -55,7 +55,7 @@ export function StyleSelector({ onSelect, onBack, prompts }: StyleSelectorProps)
             fontSize: 'clamp(1.5rem, 3vh, 2.5rem)'
           }}
         >
-          Choose a prompt
+          Choose your livery
         </h2>
       </div>
 

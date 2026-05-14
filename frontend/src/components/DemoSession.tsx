@@ -106,7 +106,8 @@ export function DemoSession() {
       }
       analytics.cameraOpened()
     } catch {
-      const errorMsg = 'Failed to access camera. Please allow camera permissions.'
+      const errorMsg =
+        "We can't access your camera—allow permissions in your browser, then reload and try again."
       setError(errorMsg)
       analytics.cameraError(errorMsg)
     }
@@ -167,12 +168,12 @@ export function DemoSession() {
   const doCapture = async () => {
     const video = videoRef.current
     if (!video || !urlToken) {
-      setError('Camera not ready. Please try again.')
+      setError("Camera isn't ready yet—give it a moment, then try again.")
       return
     }
 
     if (video.videoWidth === 0 || video.videoHeight === 0) {
-      setError('Camera not ready. Please try again.')
+      setError("Camera isn't ready yet—give it a moment, then try again.")
       return
     }
 
@@ -332,7 +333,7 @@ export function DemoSession() {
         className="w-full h-full min-h-screen flex items-center justify-center"
         style={{ background: 'rgb(var(--aipb-bg))' }}
       >
-        <div className="text-white text-xl">Loading...</div>
+        <div className="text-white text-xl">Bringing your garage online…</div>
       </div>
     )
   }
@@ -505,7 +506,7 @@ export function DemoSession() {
                   style={{ transform: 'scaleX(-1)' }}
                 />
               ) : (
-                <div className="text-white text-xl">Loading preview...</div>
+                <div className="text-white text-xl">Developing your shot…</div>
               )}
             </div>
 
@@ -598,8 +599,12 @@ export function DemoSession() {
         {step === 'processing' && (
           <ProcessingView
             key={processingRunId}
-            title="AI transforming your photo..."
-            subtitle={`Applying ${selectedStyle} style`}
+            title="Pit stop in progress"
+            subtitle={
+              selectedStyle
+                ? `Fitting the ${selectedStyle} livery—stay on this screen until the chequered flag.`
+                : undefined
+            }
           />
         )}
 

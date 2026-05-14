@@ -93,10 +93,10 @@ export function DemoWelcome({ onStart, isLoading, error }: DemoWelcomeProps) {
             className="text-white drop-shadow-md"
             style={{ fontSize: 'clamp(1.5rem, 4vh, 3rem)', fontWeight: 600 }}
           >
-            Welcome{name ? `, ${name}` : ''}!
+            Welcome to the grid{name ? `, ${name}` : ''}!
           </h1>
           <p className="text-gray-300 mt-2" style={{ fontSize: 'clamp(1rem, 2vh, 1.5rem)' }}>
-            Your AI Photo Booth demo is ready
+            Your demo is staged—when you’re ready, roll out and pick a livery.
           </p>
         </motion.div>
 
@@ -116,27 +116,27 @@ export function DemoWelcome({ onStart, isLoading, error }: DemoWelcomeProps) {
             className="text-gray-400 mb-4 uppercase tracking-wider"
             style={{ fontSize: 'clamp(0.7rem, 1.2vh, 1rem)', fontWeight: 500 }}
           >
-            Demo Limits
+            Session snapshot
           </h2>
           <div className="grid grid-cols-2 gap-4 mb-4">
             <div className="text-center">
               <div className="gradient-text" style={{ fontSize: 'clamp(2rem, 4vh, 3.5rem)', fontWeight: 900 }}>
                 {sessionsRemaining}
               </div>
-              <div className="text-gray-400" style={{ fontSize: 'clamp(0.7rem, 1.2vh, 1rem)' }}>Sessions</div>
+              <div className="text-gray-400" style={{ fontSize: 'clamp(0.7rem, 1.2vh, 1rem)' }}>Runs left</div>
             </div>
             <div className="text-center">
               <div className="gradient-text" style={{ fontSize: 'clamp(2rem, 4vh, 3.5rem)', fontWeight: 900 }}>
                 {styles.length}
               </div>
-              <div className="text-gray-400" style={{ fontSize: 'clamp(0.7rem, 1.2vh, 1rem)' }}>Styles</div>
+              <div className="text-gray-400" style={{ fontSize: 'clamp(0.7rem, 1.2vh, 1rem)' }}>Liveries</div>
             </div>
           </div>
           <div className="text-center pt-4" style={{ borderTop: '1px solid var(--aipb-section-border)' }}>
             <div className="text-white" style={{ fontSize: 'clamp(1rem, 2vh, 1.5rem)', fontWeight: 500 }}>
               {formatTime(timeRemainingSeconds)}
             </div>
-            <div className="text-gray-400" style={{ fontSize: 'clamp(0.7rem, 1.2vh, 1rem)' }}>Time remaining</div>
+            <div className="text-gray-400" style={{ fontSize: 'clamp(0.7rem, 1.2vh, 1rem)' }}>Session clock</div>
           </div>
         </motion.div>
 
@@ -153,7 +153,7 @@ export function DemoWelcome({ onStart, isLoading, error }: DemoWelcomeProps) {
           }}
         >
           <p className="text-primary-300" style={{ fontSize: 'clamp(0.75rem, 1.2vh, 1rem)' }}>
-            <span className="font-medium">Note:</span> Demo photos include a watermark.
+            <span className="font-medium">Note:</span> Demo shots carry a watermark—think broadcast overlay, not the final livery.
           </p>
         </motion.div>
 
@@ -196,10 +196,10 @@ export function DemoWelcome({ onStart, isLoading, error }: DemoWelcomeProps) {
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
               </svg>
-              Starting...
+              Opening the garage…
             </>
           ) : (
-            'Start Demo'
+            'Enter the grid'
           )}
         </motion.button>
       </motion.div>

@@ -62,7 +62,7 @@ function MarketingSection({ isLandscape = false }: { isLandscape?: boolean }) {
           marginBottom: isLandscape ? 'clamp(0.75rem, 1.5vh, 1.25rem)' : 'clamp(0.5rem, 1vh, 1rem)',
         }}
       >
-        Unlock Full Experience
+        Unlock the full grid
       </h3>
       <ul 
         className="text-gray-300"
@@ -186,7 +186,7 @@ export function ResultView({
       >
         <img
           src={changeStyleIcon}
-          alt="Change Style"
+          alt="Try another livery"
           draggable="false"
           style={{
             width: 'clamp(2rem, 4vh, 5rem)',
@@ -213,7 +213,7 @@ export function ResultView({
       >
         <img
           src={newPhotoIcon}
-          alt="New Photo"
+          alt="Back to the grid"
           draggable="false"
           style={{
             width: 'clamp(2rem, 4vh, 5rem)',
@@ -264,7 +264,7 @@ export function ResultView({
           marginTop: 'clamp(0.4rem, 0.8vh, 1rem)',
         }}
       >
-        Scan to download
+        Scan to save your shot
       </p>
     </motion.div>
   )
@@ -417,7 +417,7 @@ export function ResultView({
                       fontSize: 'clamp(0.8rem, 1.3vh, 1.1rem)',
                     }}
                   >
-                    {sessionsRemaining} session{sessionsRemaining !== 1 ? 's' : ''} remaining
+                    {sessionsRemaining} session{sessionsRemaining !== 1 ? 's' : ''} left this stint
                   </motion.p>
                   
                   <ActionButtons wider />
@@ -473,7 +473,7 @@ export function ResultView({
                     marginBottom: 0
                   }}
                 >
-                  Photo available until: {new Date(expiresAt).toLocaleTimeString()}
+                  Shot available until: {new Date(expiresAt).toLocaleTimeString()}
                 </motion.p>
               )}
 
@@ -489,7 +489,7 @@ export function ResultView({
                   marginBottom: 0
                 }}
               >
-                {sessionsRemaining} session{sessionsRemaining !== 1 ? 's' : ''} remaining
+                {sessionsRemaining} session{sessionsRemaining !== 1 ? 's' : ''} left this stint
               </motion.p>
 
               {/* Action Buttons */}

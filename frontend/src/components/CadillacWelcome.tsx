@@ -67,10 +67,10 @@ export function CadillacWelcome({ onStart, isLoading, error }: CadillacWelcomePr
             style={{ height: 'clamp(100px, 12vh, 250px)', width: 'auto' }}
           />
           <h1 className="text-white drop-shadow-md" style={{ fontSize: 'clamp(1.5rem, 4vh, 3rem)', fontWeight: 600 }}>
-            Cadillac F1 demo
+            Cadillac F1 AI Photo Booth
           </h1>
           <p className="text-gray-300 mt-2" style={{ fontSize: 'clamp(1rem, 2vh, 1.5rem)' }}>
-            Take a photo and choose one of the two AI prompts.
+            Take a portrait, pick a livery—your share-ready finish line is one tap away.
           </p>
         </motion.div>
 
@@ -101,7 +101,7 @@ export function CadillacWelcome({ onStart, isLoading, error }: CadillacWelcomePr
             marginTop: 'clamp(1.5rem, 3vh, 4rem)',
           }}
         >
-          {isLoading ? 'Starting…' : 'Start'}
+          {isLoading ? 'Opening the garage…' : 'Enter the grid'}
         </motion.button>
       </motion.div>
     </div>

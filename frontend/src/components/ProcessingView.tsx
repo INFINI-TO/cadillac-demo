@@ -3,11 +3,13 @@ import { motion } from 'framer-motion'
 import Lottie from 'lottie-react'
 import avatarAnimation from '../lottie/avatar.json'
 import racetrackAnimation from '../lottie/racetrack.json'
+import flagsAnimation from '../lottie/finishflags.json'
 import backgroundVideo from '../assets/apbck.mp4'
 
 const processingLottieByKey = {
   avatar: avatarAnimation,
   racetrack: racetrackAnimation,
+  flags: flagsAnimation,
 } as const
 
 type ProcessingLottieKey = keyof typeof processingLottieByKey

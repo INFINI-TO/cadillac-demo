@@ -1,7 +1,15 @@
 import { motion } from 'framer-motion'
 import Lottie from 'lottie-react'
 import avatarAnimation from '../lottie/avatar.json'
+import racetrackAnimation from '../lottie/racetrack.json'
 import backgroundVideo from '../assets/apbck.mp4'
+
+const processingLottieByKey = {
+  avatar: avatarAnimation,
+  racetrack: racetrackAnimation,
+} as const
+
+const processingLottieKey: keyof typeof processingLottieByKey = 'racetrack' // 'avatar' = poprzednia animacja
 
 interface ProcessingViewProps {
   title?: string
@@ -12,6 +20,8 @@ export function ProcessingView({
   title = "AI transforming your photo...", 
   subtitle = "This may take up to 30 seconds" 
 }: ProcessingViewProps) {
+  const processingAnimation = processingLottieByKey[processingLottieKey]
+
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center overflow-hidden">
       {/* Background video */}
@@ -59,7 +69,7 @@ export function ProcessingView({
             }}
           >
             <Lottie
-              animationData={avatarAnimation}
+              animationData={processingAnimation}
               loop={true}
               autoplay={true}
               className="w-full h-full"

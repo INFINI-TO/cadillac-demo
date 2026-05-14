@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { motion } from 'framer-motion'
 import Lottie from 'lottie-react'
 import avatarAnimation from '../lottie/avatar.json'
@@ -9,7 +10,9 @@ const processingLottieByKey = {
   racetrack: racetrackAnimation,
 } as const
 
-const processingLottieKey: keyof typeof processingLottieByKey = 'racetrack' // 'avatar' = poprzednia animacja
+type ProcessingLottieKey = keyof typeof processingLottieByKey
+
+const processingLottieKeys = Object.keys(processingLottieByKey) as ProcessingLottieKey[]
 
 interface ProcessingViewProps {
   title?: string
@@ -20,7 +23,11 @@ export function ProcessingView({
   title = "AI transforming your photo...", 
   subtitle = "This may take up to 30 seconds" 
 }: ProcessingViewProps) {
-  const processingAnimation = processingLottieByKey[processingLottieKey]
+  const processingAnimation = useMemo(() => {
+    const k =
+      processingLottieKeys[Math.floor(Math.random() * processingLottieKeys.length)]
+    return processingLottieByKey[k]
+  }, [])
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center overflow-hidden">

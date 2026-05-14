@@ -46,6 +46,8 @@ export function DemoSession() {
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [selectedStyle, setSelectedStyle] = useState<string | null>(null)
+  /** Wymusza remount ProcessingView przy każdym wejściu w processing (świeży los Lottie). */
+  const [processingRunId, setProcessingRunId] = useState(0)
   const [countdown, setCountdown] = useState<number | null>(null)
   const [stream, setStream] = useState<MediaStream | null>(null)
   const [videoReady, setVideoReady] = useState(false)
@@ -231,6 +233,7 @@ export function DemoSession() {
     
     const previousStyle = selectedStyle
     setSelectedStyle(style)
+    setProcessingRunId((n) => n + 1)
     setStep('processing')
     setError(null)
 
@@ -593,7 +596,8 @@ export function DemoSession() {
         )}
 
         {step === 'processing' && (
-          <ProcessingView 
+          <ProcessingView
+            key={processingRunId}
             title="AI transforming your photo..."
             subtitle={`Applying ${selectedStyle} style`}
           />

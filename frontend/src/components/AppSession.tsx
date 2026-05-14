@@ -37,6 +37,8 @@ export function AppSession() {
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [selectedLabel, setSelectedLabel] = useState<string | null>(null)
+  /** Wymusza remount ProcessingView przy każdym wejściu w processing (świeży los Lottie). */
+  const [processingRunId, setProcessingRunId] = useState(0)
   const [countdown, setCountdown] = useState<number | null>(null)
   const [stream, setStream] = useState<MediaStream | null>(null)
   const [videoReady, setVideoReady] = useState(false)
@@ -172,6 +174,7 @@ export function AppSession() {
     if (!capturedPhotoId) return
     const label = prompts.find((p) => p.id === promptId)?.label ?? promptId
     setSelectedLabel(label)
+    setProcessingRunId((n) => n + 1)
     setStep('processing')
     setError(null)
     try {
@@ -432,6 +435,7 @@ export function AppSession() {
 
         {step === 'processing' && (
           <ProcessingView
+            key={processingRunId}
             title="AI is processing your photo…"
             subtitle={selectedLabel ? `Prompt: ${selectedLabel}` : 'Please wait'}
           />

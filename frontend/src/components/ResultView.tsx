@@ -19,6 +19,7 @@ function ObfuscatedEmail({ user, domain, className, subject, children, style, tr
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault()
     if (trackCta) {
+      analytics.buttonClick('result_cta_email', { demo_step: 'result', button_label: 'Email CTA' })
       analytics.ctaGetInTouchClicked()
     }
     const subjectParam = subject ? `?subject=${encodeURIComponent(subject)}` : ''

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { formatApiError, login, sessionStatus } from '../services/cadillacApi'
+import { analytics } from '../hooks/useAnalytics'
 
 export function LoginPage() {
   const navigate = useNavigate()
@@ -33,15 +34,22 @@ export function LoginPage() {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault()
+    analytics.buttonClick('login_submit', { demo_step: 'login', button_label: 'Sign in' })
     setError(null)
     setLoading(true)
     try {
       await login(username.trim(), password)
+      analytics.loginSuccess()
       navigate('/app')
     } catch (err) {
       const msg = formatApiError(err)
-      setError(
+      const errorType =
         msg.toLowerCase().includes('invalid credentials') || msg.includes('401')
+          ? 'invalid_credentials'
+          : 'other'
+      analytics.loginFailed(errorType)
+      setError(
+        errorType === 'invalid_credentials'
           ? 'Invalid username or password'
           : msg
       )

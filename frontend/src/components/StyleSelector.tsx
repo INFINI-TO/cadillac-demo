@@ -5,6 +5,7 @@ import { useRef } from 'react'
 import backgroundVideo from '../assets/apbck.mp4'
 
 import type { PromptOption } from '../services/cadillacApi'
+import { analytics } from '../hooks/useAnalytics'
 
 interface StyleSelectorProps {
   onSelect: (style: string) => void
@@ -131,7 +132,11 @@ export function StyleSelector({ onSelect, onBack, prompts }: StyleSelectorProps)
         >
           {/* Back button - round black */}
           <button
-            onClick={onBack}
+            type="button"
+            onClick={() => {
+              analytics.buttonClick('style_back', { demo_step: 'style', button_label: 'Back' })
+              onBack()
+            }}
             className="rounded-full flex items-center justify-center transition-all no-select"
             style={{ 
               background: 'rgb(17, 17, 17)',

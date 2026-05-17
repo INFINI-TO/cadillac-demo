@@ -2,6 +2,8 @@
 
 interface ImportMetaEnv {
   readonly VITE_API_URL: string
+  readonly VITE_GA_MEASUREMENT_ID?: string
+  readonly VITE_GA_ALLOWED_HOST?: string
 }
 
 interface ImportMeta {
@@ -14,11 +16,7 @@ declare module '*.mp4' {
 }
 
 interface Window {
-  gtag: (
-    command: 'event' | 'config' | 'js',
-    targetId: string,
-    params?: Record<string, unknown>
-  ) => void
+  gtag: (...args: unknown[]) => void
   dataLayer: unknown[]
   grecaptcha: {
     ready: (cb: () => void) => void

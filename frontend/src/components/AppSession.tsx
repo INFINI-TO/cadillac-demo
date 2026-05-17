@@ -15,6 +15,7 @@ import { StyleSelector } from './StyleSelector'
 import { ProcessingView } from './ProcessingView'
 import { ResultView } from './ResultView'
 import { AnimatePresence, motion } from 'framer-motion'
+import { analytics } from '../hooks/useAnalytics'
 import backIcon from '../assets/ic-back.svg'
 import retakeIcon from '../assets/ic-retake.svg'
 import takePhotoIcon from '../assets/ic-takephoto.svg'
@@ -46,6 +47,7 @@ export function AppSession() {
   const videoRef = useRef<HTMLVideoElement | null>(null)
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
   const streamRef = useRef<MediaStream | null>(null)
+  const processingStartRef = useRef<number | null>(null)
 
   useEffect(() => {
     const run = async () => {
@@ -58,6 +60,7 @@ export function AppSession() {
         const p = await fetchPrompts()
         setPrompts(p)
         setStep('welcome')
+        analytics.pageView('cadillac_welcome')
       } catch (err) {
         console.error('AppSession init:', formatApiError(err))
         navigate('/')
@@ -65,6 +68,11 @@ export function AppSession() {
     }
     run()
   }, [navigate])
+
+  useEffect(() => {
+    if (step === 'loading') return
+    analytics.demoStepView(step)
+  }, [step])
 
   const startCamera = useCallback(async () => {
     setVideoReady(false)
@@ -78,10 +86,12 @@ export function AppSession() {
         videoRef.current.srcObject = newStream
         videoRef.current.play().catch(() => {})
       }
+      analytics.cameraOpened()
     } catch {
-      setError(
-        "We can't access your camera—allow permissions in your browser, then reload and try again.",
-      )
+      const errorMsg =
+        "We can't access your camera—allow permissions in your browser, then reload and try again."
+      setError(errorMsg)
+      analytics.cameraError(errorMsg)
     }
   }, [])
 
@@ -95,6 +105,7 @@ export function AppSession() {
   }, [])
 
   const handleStart = async () => {
+    analytics.buttonClick('welcome_start', { demo_step: 'welcome', button_label: 'Enter the grid' })
     setError(null)
     setIsLoading(true)
     try {
@@ -108,7 +119,9 @@ export function AppSession() {
   const handleCaptureClick = () => {
     if (countdown !== null) return
     if (!videoReady) return
+    analytics.buttonClick('camera_capture', { demo_step: 'camera', button_label: 'Take photo' })
     setCountdown(3)
+    analytics.photoCountdownStarted()
   }
 
   useEffect(() => {
@@ -154,6 +167,7 @@ export function AppSession() {
       setCapturedPhotoId(cap.photo_id)
       setCapturedImageUrl(previewCaptureUrl(cap.photo_id))
       setStep('preview')
+      analytics.photoCaptured()
     } catch (err) {
       setError(err instanceof Error ? err.message : "Couldn't save that lap—try again.")
       setCapturedImageUrl(null)
@@ -162,6 +176,8 @@ export function AppSession() {
   }
 
   const handleRetake = async () => {
+    analytics.buttonClick('preview_retake', { demo_step: 'preview', button_label: 'Retake' })
+    analytics.photoRetake()
     setCapturedPhotoId(null)
     setCapturedImageUrl(null)
     await startCamera()
@@ -169,31 +185,58 @@ export function AppSession() {
   }
 
   const handleAcceptPhoto = () => {
+    analytics.buttonClick('preview_accept', { demo_step: 'preview', button_label: 'Accept' })
+    analytics.photoAccepted()
     setStep('style')
   }
 
   const handlePromptSelect = async (promptId: string) => {
     if (!capturedPhotoId) return
     const label = prompts.find((p) => p.id === promptId)?.label ?? promptId
+    const previousLabel = selectedLabel
+
+    analytics.buttonClick('style_select', {
+      demo_step: 'style',
+      button_label: label,
+      prompt_id: promptId,
+      style_name: label,
+    })
+
+    if (previousLabel && previousLabel !== label) {
+      analytics.styleChanged(previousLabel, label)
+    } else if (!previousLabel) {
+      analytics.styleSelected(label)
+    }
+    analytics.processingStarted(label)
+    processingStartRef.current = Date.now()
+
     setSelectedLabel(label)
     setProcessingRunId((n) => n + 1)
     setStep('processing')
     setError(null)
     try {
       const processResponse = await apiProcessPhoto(capturedPhotoId, promptId)
+      const durationMs =
+        processingStartRef.current !== null ? Date.now() - processingStartRef.current : undefined
+      analytics.processingCompleted(label, durationMs)
       setResult({
         photoUrl: processResponse.url,
         qrCodeUrl: processResponse.qr_url ?? null,
         expiresAt: null,
       })
       setStep('result')
+      analytics.resultViewed(label)
     } catch (err) {
-      setError(formatApiError(err))
+      const errorMsg = formatApiError(err)
+      setError(errorMsg)
+      analytics.processingError(label, errorMsg)
       setStep('style')
     }
   }
 
   const handleNewPhoto = async () => {
+    analytics.buttonClick('result_new_photo', { demo_step: 'result', button_label: 'New photo' })
+    analytics.newPhotoClicked()
     setResult(null)
     setCapturedPhotoId(null)
     setCapturedImageUrl(null)
@@ -204,12 +247,15 @@ export function AppSession() {
   }
 
   const handleChangeStyle = () => {
+    analytics.buttonClick('result_change_style', { demo_step: 'result', button_label: 'Change style' })
+    analytics.changeStyleClicked()
     setResult(null)
     setStep('style')
   }
 
   const handleBack = () => {
     if (step === 'camera') {
+      analytics.buttonClick('camera_back', { demo_step: 'camera', button_label: 'Back' })
       stopCamera()
       setStep('welcome')
     } else if (step === 'preview') {

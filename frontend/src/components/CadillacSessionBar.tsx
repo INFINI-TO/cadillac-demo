@@ -1,11 +1,14 @@
 import logo from '../assets/logo-aiphotobooth-default.svg'
 import { logout } from '../services/cadillacApi'
 import { useNavigate } from 'react-router-dom'
+import { analytics } from '../hooks/useAnalytics'
 
 export function CadillacSessionBar() {
   const navigate = useNavigate()
 
   const handleLogout = async () => {
+    analytics.buttonClick('session_logout', { button_label: 'Log out' })
+    analytics.logout()
     try {
       await logout()
     } catch {

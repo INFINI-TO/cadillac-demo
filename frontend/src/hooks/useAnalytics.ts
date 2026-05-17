@@ -1,15 +1,46 @@
+import { isAnalyticsEnabled } from '../lib/googleAnalytics'
+
 type EventParams = Record<string, string | number | boolean | undefined>
 
+export type ButtonClickParams = {
+  demo_step?: string
+  button_label?: string
+  prompt_id?: string
+  style_name?: string
+}
+
 export function trackEvent(eventName: string, params?: EventParams): void {
-  if (typeof window !== 'undefined' && window.gtag) {
+  if (!isAnalyticsEnabled() || typeof window === 'undefined' || !window.gtag) return
+  try {
     window.gtag('event', eventName, params)
+  } catch {
+    // never break demo flow
   }
 }
 
 export const analytics = {
-  // Landing page events
-  pageView: (pageName: string) => {
-    trackEvent('page_view', { page_name: pageName })
+  pageView: (pageName: string, extra?: EventParams) => {
+    trackEvent('page_view', { page_name: pageName, ...extra })
+  },
+
+  demoStepView: (step: string) => {
+    trackEvent('demo_step_view', { demo_step: step })
+  },
+
+  buttonClick: (buttonId: string, params?: ButtonClickParams) => {
+    trackEvent('button_click', { button_id: buttonId, ...params })
+  },
+
+  loginSuccess: () => {
+    trackEvent('login_success')
+  },
+
+  loginFailed: (errorType: string) => {
+    trackEvent('login_failed', { error_type: errorType })
+  },
+
+  logout: () => {
+    trackEvent('logout')
   },
 
   demoRequested: (industry: string, hasMarketingConsent: boolean) => {
@@ -27,7 +58,6 @@ export const analytics = {
     trackEvent('demo_request_error', { error_message: errorMessage })
   },
 
-  // Session events
   sessionStarted: (sessionsRemaining: number) => {
     trackEvent('session_started', { sessions_remaining: sessionsRemaining })
   },
@@ -36,7 +66,6 @@ export const analytics = {
     trackEvent('session_expired')
   },
 
-  // Camera events
   cameraOpened: () => {
     trackEvent('camera_opened')
   },
@@ -45,7 +74,6 @@ export const analytics = {
     trackEvent('camera_error', { error_message: errorMessage })
   },
 
-  // Photo capture events
   photoCountdownStarted: () => {
     trackEvent('photo_countdown_started')
   },
@@ -62,7 +90,6 @@ export const analytics = {
     trackEvent('photo_accepted')
   },
 
-  // Style selection events
   styleSelected: (styleName: string) => {
     trackEvent('style_selected', { style_name: styleName })
   },
@@ -74,7 +101,6 @@ export const analytics = {
     })
   },
 
-  // Processing events
   processingStarted: (styleName: string) => {
     trackEvent('processing_started', { style_name: styleName })
   },
@@ -93,7 +119,6 @@ export const analytics = {
     })
   },
 
-  // Result events
   resultViewed: (styleName: string) => {
     trackEvent('result_viewed', { style_name: styleName })
   },
@@ -102,20 +127,20 @@ export const analytics = {
     trackEvent('qr_code_scanned')
   },
 
-  newPhotoClicked: (sessionsRemaining: number) => {
-    trackEvent('new_photo_clicked', { sessions_remaining: sessionsRemaining })
+  newPhotoClicked: (sessionsRemaining?: number) => {
+    trackEvent('new_photo_clicked', {
+      ...(sessionsRemaining !== undefined ? { sessions_remaining: sessionsRemaining } : {}),
+    })
   },
 
   changeStyleClicked: () => {
     trackEvent('change_style_clicked')
   },
 
-  // CTA events
   ctaGetInTouchClicked: () => {
     trackEvent('cta_get_in_touch_clicked')
   },
 
-  // Cookie consent
   cookieConsentAccepted: () => {
     trackEvent('cookie_consent_accepted')
   },
